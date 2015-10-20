@@ -102,13 +102,13 @@ class CloudManForm(forms.Form):
         widget=forms.RadioSelect(attrs={"class": "radio_select cluster-type-choice",
                                         "onChange": "change_cluster_type(this.value)"}))
     storage_type = forms.ChoiceField(
-        (("volume", "Persistent volume storage"), ("transient", "Transient instance storage")),
+        (("transient", "Transient instance storage"), ("volume", "Persistent volume storage")),
         help_text="The type of storage to use for the main file system. "
                   "See <a href='{0}' {1} tabindex='-1'>this page"
                   "</a> for more details on storage types.".format(types_url, target),
         label="Storage type",
         required=False,
-        initial="volume",
+        initial="transient",
         widget=forms.RadioSelect(attrs={"class": "radio_select cluster-type-choice",
                                         "onChange": "change_storage_option(this.value)"}))
     storage_size = forms.CharField(
