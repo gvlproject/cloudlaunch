@@ -7,6 +7,9 @@ import djcelery
 djcelery.setup_loader()
 BROKER_URL = 'django://'
 
+BRAND = "GVL Launcher"
+ASK_FOR_EMAIL = True
+REQUIRE_EMAIL = True
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -28,7 +31,21 @@ MANAGERS = ADMINS
 #         'PORT': '5910',                  # Set to empty string for default. Not used with sqlite3.
 #     }
 # }
-DATABASES = {'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))}
+DATABASES = {
+    'default': {
+        # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or
+        # 'oracle'.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bcc',       # Or path to database file if using sqlite3.
+        'USER': 'bcc',                # Not used with sqlite3.
+        'PASSWORD': '<change>',         # Not used with sqlite3.
+        # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': 'localhost',
+        # Set to empty string for default. Not used with sqlite3.
+        'PORT': '5432',
+    }
+}
+#DATABASES = {'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))}
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -41,10 +58,10 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         #'LOCATION': '127.0.0.1:11211',
-        }
+    }
 }
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 # Required because of the way we're redirecting from launch to monitor pages
 SESSION_SAVE_EVERY_REQUEST = True
@@ -85,7 +102,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/app/static_root'
+STATIC_ROOT = '/gvl/bcc/media/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -112,20 +129,20 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'takj3d3$gv%^ulsdsp_q0-458%&rb7@#utq_%1g+*_9zp@ub09'
 
 # Base URL of django app to redirect root (/) requests to.
-REDIRECT_BASE = "https://biocloudcentral.herokuapp.com/"
+REDIRECT_BASE = None
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #     'django.template.loaders.eggs.Loader',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -198,8 +215,8 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler'
         },
         'console': {
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
             'formatter': 'verbose'
         }
     },
@@ -210,9 +227,9 @@ LOGGING = {
             'propagate': True,
         },
         'biocloudcentral': {
-            'handlers':['console'],
+            'handlers': ['console'],
             'propagate': True,
-            'level':'DEBUG',
+            'level': 'DEBUG',
         }
     }
 }
@@ -220,5 +237,5 @@ LOGGING = {
 # Allow settings to be overridden in a biocloudcentral/settings_local.py
 try:
     from settings_local import *
-except ImportError, e:
+except ImportError as e:
     pass
